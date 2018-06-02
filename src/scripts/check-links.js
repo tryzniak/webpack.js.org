@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 // Check piped links while allowing a fixed amount to fail
 // Adapted from tap-json.
-var Parser = require('tap-parser');
-var through = require('through2');
-var duplexer = require('duplexer');
-var minimist = require('minimist');
+var Parser = require("tap-parser");
+var through = require("through2");
+var duplexer = require("duplexer");
+var minimist = require("minimist");
 
-process.stdin
-  .pipe(checkLinks())
-  .pipe(process.stdout);
+process.stdin.pipe(checkLinks()).pipe(process.stdout);
 
 function checkLinks(args) {
   var argv = minimist(process.argv.slice(2));
@@ -21,12 +19,14 @@ function checkLinks(args) {
   var data = [];
   var name = null;
 
-  tap.on('complete', function(res) {
+  tap.on("complete", function(res) {
     const failures = res.failures.filter(failure => {
-      return failure.diag && failure.diag.at ? !(
-        /class="support__[^"]*"/.test(failure.diag.at) ||
-        /src="https:\/\/img\.shields\.io[^"]*"/.test(failure.diag.at)
-      ) : false;
+      return failure.diag && failure.diag.at
+        ? !(
+            /class="support__[^"]*"/.test(failure.diag.at) ||
+            /src="https:\/\/img\.shields\.io[^"]*"/.test(failure.diag.at)
+          )
+        : false;
     });
 
     if (failures.length > 0) {
@@ -43,8 +43,10 @@ function checkLinks(args) {
 }
 
 function formatFailures(failures) {
-  return failures.map(failure => {
-    let { diag = {} } = failure;
-    return failure.name + '\n' + diag.actual + ' at ' + diag.at;
-  }).join('\n\n');
+  return failures
+    .map(failure => {
+      let { diag = {} } = failure;
+      return failure.name + "\n" + diag.actual + " at " + diag.at;
+    })
+    .join("\n\n");
 }

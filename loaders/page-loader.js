@@ -1,18 +1,22 @@
-const _ = require('lodash');
-const frontmatter = require('front-matter');
-const loaderUtils = require('loader-utils');
-const markdown = require('../src/utilities/markdown');
-const highlight = require('../src/utilities/highlight');
+const _ = require("lodash");
+const frontmatter = require("front-matter");
+const loaderUtils = require("loader-utils");
+const markdown = require("../src/utilities/markdown");
+const highlight = require("../src/utilities/highlight");
 
-module.exports = function (source) {
+module.exports = function(source) {
   const result = frontmatter(source);
 
   result.attributes = result.attributes || {};
-  result.attributes.group = result.attributes.group || '-';
+  result.attributes.group = result.attributes.group || "-";
   result.attributes.anchors = markdown().getAnchors(result.body);
-  result.attributes.contributors = (result.attributes.contributors || []).sort();
-  result.attributes.related = Array.isArray(result.attributes.related) ? result.attributes.related : [];
-  result.title = result.attributes.title || 'webpack';
+  result.attributes.contributors = (
+    result.attributes.contributors || []
+  ).sort();
+  result.attributes.related = Array.isArray(result.attributes.related)
+    ? result.attributes.related
+    : [];
+  result.title = result.attributes.title || "webpack";
   result.body = markdown().process(result.body, highlight);
 
   delete result.frontmatter;
@@ -20,8 +24,9 @@ module.exports = function (source) {
   const context = this;
 
   return `module.exports = ${JSON.stringify(result)};`.replace(
-    /__IMG_START__([^,\]]+)__IMG_END__/g, (match, src) => {
-      if (_.startsWith(src, 'http')) {
+    /__IMG_START__([^,\]]+)__IMG_END__/g,
+    (match, src) => {
+      if (_.startsWith(src, "http")) {
         return src;
       }
 
